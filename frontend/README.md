@@ -67,3 +67,13 @@ export default tseslint.config([
   },
 ])
 ```
+ Postman Upload Request
+Method: POST
+
+URL: http://localhost:5000/api/templates/upload
+
+Headers: Authorization: Bearer <admin_jwt>
+
+Body: form-data
+
+key: file → (select a .docx or .pdf template file)
