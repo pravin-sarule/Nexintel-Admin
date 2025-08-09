@@ -1,10 +1,29 @@
-// routes/authRoutes.js
+// const express = require('express');
+// const router = express.Router();
+// const { loginAdmin, getAdminProfile } = require('../controllers/authController');
+// const authenticateAdmin = require('../middleware/authMiddleware');
+
+// router.post('/login', loginAdmin);
+// router.get('/profile', authenticateAdmin, getAdminProfile);
+
+// module.exports = router;
 const express = require('express');
-const router = express.Router();
-const authController = require('../controllers/authController');
-const { protect } = require('../middlewares/authMiddleware');
 
-router.post('/login', authController.login);
-router.post('/logout', protect, authController.logout);
+module.exports = (pool) => {
+  const router = express.Router();
+  const { loginAdmin } = require('../controllers/authController')(pool);
+  const { protect } = require('../middleware/authMiddleware'); // Import protect
 
-module.exports = router;
+  // Public Route
+  router.post('/login', loginAdmin);
+
+  // Protected Test Route
+  router.get('/dashboard', protect(pool), (req, res) => { // Use protect with pool
+    res.status(200).json({
+      message: `Hello Admin ${req.user.id}`, // Use req.user as per updated middleware
+      user: req.user
+    });
+  });
+
+  return router;
+};

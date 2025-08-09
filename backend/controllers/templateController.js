@@ -1,50 +1,304 @@
-const pool = require('../config/db');
-const { uploadTemplateToGCS, deleteFromGCS } = require('../services/gcsService');
+// const Template = require('../models/template');
+// const UserTemplateUsage = require('../models/userTemplateUsage');
+// const { bucket } = require('../middleware/upload');
+// const { Op } = require('sequelize');
 
-// Upload Template
-exports.uploadTemplate = async (req, res) => {
+// // POST /admin/templates
+// exports.createTemplate = async (req, res) => {
+//   try {
+//     if (!req.file) {
+//       return res.status(400).json({ message: 'No file uploaded.' });
+//     }
+
+//     const { name, category, type, status = 'active' } = req.body;
+//     const gcs_path = req.file.gcsUrl;
+
+//     const template = await Template.create({
+//       name,
+//       category,
+//       type,
+//       status,
+//       gcs_path,
+//     });
+
+//     res.status(201).json({
+//       message: 'Template uploaded and added successfully',
+//       template,
+//     });
+//   } catch (error) {
+//     console.error('Error creating template:', error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// };
+
+// // GET /admin/templates
+// exports.getAllTemplates = async (req, res) => {
+//   try {
+//     const templates = await Template.findAll({
+//       include: [{
+//         model: UserTemplateUsage,
+//         attributes: [],
+//         duplicating: false,
+//       }],
+//       attributes: {
+//         include: [
+//           [
+//             Template.sequelize.literal(`(
+//               SELECT COUNT(*)
+//               FROM user_template_usage AS usage
+//               WHERE usage.template_id = "Template"."id"
+//             )`),
+//             'usageCount'
+//           ]
+//         ]
+//       },
+//       order: [['created_at', 'DESC']],
+//     });
+
+//     res.status(200).json(templates);
+//   } catch (error) {
+//     console.error('Error fetching templates:', error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// };
+
+// // GET /admin/templates/:id
+// exports.getTemplateById = async (req, res) => {
+//   try {
+//     const template = await Template.findByPk(req.params.id, {
+//       include: [{
+//         model: UserTemplateUsage,
+//         attributes: [],
+//         duplicating: false,
+//       }],
+//       attributes: {
+//         include: [
+//           [
+//             Template.sequelize.literal(`(
+//               SELECT COUNT(*)
+//               FROM user_template_usage AS usage
+//               WHERE usage.template_id = "Template"."id"
+//             )`),
+//             'usageCount'
+//           ]
+//         ]
+//       },
+//     });
+
+//     if (!template) {
+//       return res.status(404).json({ message: 'Template not found' });
+//     }
+
+//     res.status(200).json(template);
+//   } catch (error) {
+//     console.error('Error fetching template by ID:', error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// };
+
+// // PUT /admin/templates/:id
+// exports.updateTemplate = async (req, res) => {
+//   try {
+//     const { name, category, type, status } = req.body;
+//     const template = await Template.findByPk(req.params.id);
+
+//     if (!template) {
+//       return res.status(404).json({ message: 'Template not found' });
+//     }
+
+//     template.name = name || template.name;
+//     template.category = category || template.category;
+//     template.type = type || template.type;
+//     template.status = status || template.status;
+//     template.updated_at = new Date();
+
+//     await template.save();
+
+//     res.status(200).json({
+//       message: 'Template updated successfully',
+//       template,
+//     });
+//   } catch (error) {
+//     console.error('Error updating template:', error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// };
+
+// // DELETE /admin/templates/:id
+// exports.deleteTemplate = async (req, res) => {
+//   try {
+//     const template = await Template.findByPk(req.params.id);
+
+//     if (!template) {
+//       return res.status(404).json({ message: 'Template not found' });
+//     }
+
+//     // Extract filename
+//     const gcsFileName = template.gcs_path.split('/').slice(-2).join('/');
+//     const file = bucket.file(gcsFileName);
+
+//     // Delete from GCS
+//     await file.delete().catch(err => {
+//       console.warn('GCS file not found or already deleted:', err.message);
+//     });
+
+//     await template.destroy();
+
+//     res.status(200).json({ message: 'Template deleted successfully' });
+//   } catch (error) {
+//     console.error('Error deleting template:', error);
+//     res.status(500).json({ message: 'Server error', error: error.message });
+//   }
+// };
+const Template = require('../models/template');
+const UserTemplateUsage = require('../models/userTemplateUsage');
+const { bucket } = require('../middleware/upload');
+const { Op } = require('sequelize');
+
+// POST /admin/templates
+exports.createTemplate = async (req, res) => {
   try {
-    const file = req.file;
-    if (!file) return res.status(400).json({ error: 'No file uploaded' });
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded.' });
+    }
 
-    const { path, url } = await uploadTemplateToGCS(file.originalname, file.buffer);
-    await pool.query(`
-      INSERT INTO templates (name, gcs_path, file_url, uploaded_by)
-      VALUES ($1, $2, $3, $4)
-    `, [file.originalname, path, url, req.admin.id]);
+    const { name, category, type, status = 'active' } = req.body;
+    const gcs_path = req.file.gcsUrl;
 
-    res.json({ message: 'Template uploaded successfully', url });
-  } catch (err) {
-    console.error('Upload error:', err);
-    res.status(500).json({ error: 'Template upload failed' });
+    const template = await Template.create({
+      name,
+      category,
+      type,
+      status,
+      gcs_path,
+    });
+
+    res.status(201).json({
+      message: 'Template uploaded and added successfully',
+      template,
+    });
+  } catch (error) {
+    console.error('Error creating template:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-// List Templates
-exports.getTemplates = async (req, res) => {
+// GET /admin/templates
+exports.getAllTemplates = async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM templates ORDER BY created_at DESC');
-    res.json(result.rows);
-  } catch (err) {
-    console.error('Fetch error:', err);
-    res.status(500).json({ error: 'Failed to fetch templates' });
+    const templates = await Template.findAll({
+      include: [{
+        model: UserTemplateUsage,
+        attributes: [],
+        duplicating: false,
+      }],
+      attributes: {
+        include: [
+          [
+            Template.sequelize.literal(`(
+              SELECT COUNT(*)
+              FROM user_template_usage AS usage
+              WHERE usage.template_id = "Template"."id"
+            )`),
+            'usageCount'
+          ]
+        ]
+      },
+      order: [['created_at', 'DESC']],
+    });
+
+    res.status(200).json(templates);
+  } catch (error) {
+    console.error('Error fetching templates:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-// Delete Template
+// GET /admin/templates/:id
+exports.getTemplateById = async (req, res) => {
+  try {
+    const template = await Template.findByPk(req.params.id, {
+      include: [{
+        model: UserTemplateUsage,
+        attributes: [],
+        duplicating: false,
+      }],
+      attributes: {
+        include: [
+          [
+            Template.sequelize.literal(`(
+              SELECT COUNT(*)
+              FROM user_template_usage AS usage
+              WHERE usage.template_id = "Template"."id"
+            )`),
+            'usageCount'
+          ]
+        ]
+      },
+    });
+
+    if (!template) {
+      return res.status(404).json({ message: 'Template not found' });
+    }
+
+    res.status(200).json(template);
+  } catch (error) {
+    console.error('Error fetching template by ID:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// PUT /admin/templates/:id
+exports.updateTemplate = async (req, res) => {
+  try {
+    const { name, category, type, status } = req.body;
+    const template = await Template.findByPk(req.params.id);
+
+    if (!template) {
+      return res.status(404).json({ message: 'Template not found' });
+    }
+
+    template.name = name || template.name;
+    template.category = category || template.category;
+    template.type = type || template.type;
+    template.status = status || template.status;
+    template.updated_at = new Date();
+
+    await template.save();
+
+    res.status(200).json({
+      message: 'Template updated successfully',
+      template,
+    });
+  } catch (error) {
+    console.error('Error updating template:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// DELETE /admin/templates/:id
 exports.deleteTemplate = async (req, res) => {
-  const { id } = req.params;
   try {
-    const result = await pool.query('SELECT * FROM templates WHERE id = $1', [id]);
-    if (result.rows.length === 0) return res.status(404).json({ error: 'Template not found' });
+    const template = await Template.findByPk(req.params.id);
 
-    const template = result.rows[0];
-    await deleteFromGCS(template.gcs_path);
-    await pool.query('DELETE FROM templates WHERE id = $1', [id]);
+    if (!template) {
+      return res.status(404).json({ message: 'Template not found' });
+    }
 
-    res.json({ message: 'Template deleted successfully' });
-  } catch (err) {
-    console.error('Delete error:', err);
-    res.status(500).json({ error: 'Failed to delete template' });
+    // Extract filename
+    const gcsFileName = template.gcs_path.split('/').slice(-2).join('/');
+    const file = bucket.file(gcsFileName);
+
+    // Delete from GCS
+    await file.delete().catch(err => {
+      console.warn('GCS file not found or already deleted:', err.message);
+    });
+
+    await template.destroy();
+
+    res.status(200).json({ message: 'Template deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting template:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };

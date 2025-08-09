@@ -1,13 +1,23 @@
-// // config/db.js
 // const { Pool } = require('pg');
 // require('dotenv').config();
 
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-// });
+// const connectDB = async () => {
+//   try {
+//     const pool = new Pool({
+//       connectionString: process.env.DATABASE_URL,
+//     });
+//     await pool.connect();
+//     console.log('PostgreSQL connected...');
+//     return pool;
+//   } catch (err) {
+//     console.error(err.message);
+//     // Exit process with failure
+//     process.exit(1);
+//   }
+// };
 
-// module.exports = pool;
-// config/db.js
+// module.exports = connectDB;
+// db.js
 const { Pool } = require('pg');
 require('dotenv').config();
 
@@ -15,14 +25,14 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
-// Test connection
-pool.connect()
-  .then(client => {
-    console.log('✅ PostgreSQL database connected successfully');
-    client.release();
-  })
-  .catch(err => {
-    console.error('❌ PostgreSQL connection error:', err.stack);
-  });
+pool.on('connect', () => {
+  console.log('PostgreSQL connected...');
+});
+
+// Add error handling for the pool
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle client', err);
+  process.exit(-1); // Exit the process if a database error occurs
+});
 
 module.exports = pool;
