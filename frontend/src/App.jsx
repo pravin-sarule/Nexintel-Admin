@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Removed useEffect
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // Removed useNavigate
 import LoginPage from './components/auth/LoginPage';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -12,8 +12,12 @@ import './App.css';
 import './index.css';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Initial authentication state
-  // Removed useNavigate and useEffect
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    // Initialize isAuthenticated from localStorage on component mount
+    const token = localStorage.getItem('token');
+    // In a real application, you would decode the token and check its validity/expiration
+    return !!token; // Returns true if token exists, false otherwise
+  });
 
   // Placeholder for login logic
   const handleLogin = () => {
@@ -25,7 +29,20 @@ function App() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     localStorage.removeItem('token'); // Clear token on logout
+    setIsAuthenticated(false); // Update state on logout
   };
+
+  // Effect to handle authentication status on initial load and token changes
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // In a real application, you would decode the token and check its expiration
+      // For now, we'll just assume it's valid if it exists
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+    }
+  }, []); // Empty dependency array means this effect runs once on mount
 
   return (
     <Router>
