@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 // API base URL - adjust this to your backend URL
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://nexintel-admin.onrender.com/api';
 
 const MySwal = withReactContent(Swal);
 
