@@ -243,7 +243,7 @@ const LoginPage = ({ setAuthStatus }) => { // Added setAuthStatus prop
     setSuccess('');
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login',
+      const response = await axios.post('http://localhost:5000/api/auth/login',
         { email, password },
         {
           headers: {
