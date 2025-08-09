@@ -14,7 +14,7 @@ const protect = (pool) => async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     // Fetch user from database to ensure user still exists and is not blocked
-    const userResult = await pool.query('SELECT id, email, role, is_blocked FROM users WHERE id = $1', [decoded.id]);
+    const userResult = await pool.query('SELECT id, email, role FROM admins WHERE id = $1', [decoded.id]);
     const user = userResult.rows[0];
 
     if (!user || user.is_blocked) {

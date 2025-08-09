@@ -1,2 +1,13 @@
-// This file is no longer needed as its functionality is replaced by authorize middleware in authMiddleware.js
-// Keeping it for reference if needed in the future, but it will not be used.
+const adminProtect = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Unauthorized: User not authenticated' });
+  }
+
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Access denied: Requires admin role' });
+  }
+
+  next();
+};
+
+module.exports = { adminProtect };
