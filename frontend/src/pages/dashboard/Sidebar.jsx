@@ -56,6 +56,11 @@ const Sidebar = ({ isOpen }) => {
         { name: 'Pages', path: '/dashboard/pages', icon: File },
       ]
     },
+    {
+      name: 'Subscription Management',
+      path: '/dashboard/subscriptions',
+      icon: Layers
+    },
   ];
 
   return (

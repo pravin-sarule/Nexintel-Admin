@@ -8,6 +8,7 @@ import DashboardContent from './pages/dashboard/DashboardContent';
 import UserManagement from './pages/dashboard/UserManagement';
 import ContentManagement from './pages/dashboard/ContentManagement';
 import TemplateManagement from './pages/dashboard/TemplateManagement';
+import SubscriptionManagement from './pages/dashboard/SubscriptionManagement';
 import './App.css';
 import './index.css';
 
@@ -58,6 +59,7 @@ function App() {
             <Route path="users" element={<UserManagement />} />
             <Route path="articles" element={<ContentManagement />} />
             <Route path="templates" element={<TemplateManagement />} />
+            <Route path="subscriptions" element={<SubscriptionManagement />} />
           </Route>
         </Route>
 
