@@ -114,6 +114,109 @@
 // app.use((req, res, next) => {
 //   res.status(404).json({ message: 'API Endpoint Not Found' });
 // });
+// const express = require('express');
+// const cors = require('cors');
+// require('dotenv').config();
+
+// // --- Database & Model Imports ---
+// const pool = require('./config/db'); // PostgreSQL pool
+// const sequelize = require('./config/sequelize'); // Sequelize instance
+// // Note: It's good practice to ensure models are imported, even if not directly used here,
+// // so Sequelize is aware of them for the .sync() call.
+// require('./models/template'); 
+// require('./models/userTemplateUsage');
+
+// // --- Route Imports ---
+// const authRoutes = require('./routes/authRoutes');
+// const userRoutes = require('./routes/userRoutes');
+// const adminTemplateRoutes = require('./routes/adminTemplateRoutes');
+// const planRoutes = require('./routes/planRoutes');
+
+// // --- Express App Initialization ---
+// const app = express();
+
+// // --- Core Middleware (Order is CRITICAL) ---
+
+// // 1. CORS Middleware: Handle cross-origin requests first.
+// app.use(cors({
+//   origin: 'http://localhost:3001', // Allow requests from your frontend
+// }));
+
+// // 2. JSON Body Parser: To parse `req.body` from JSON requests.
+// app.use(express.json());
+
+// // 3. Logging Middleware: To see all incoming requests.
+// app.use((req, res, next) => {
+//   console.log(`Incoming Request: ${req.method} ${req.originalUrl}`);
+//   next();
+// });
+
+// // --- API Routes ---
+// // All routes are defined AFTER the core middleware has been set up.
+// app.use('/api/auth', authRoutes(pool));
+// app.use('/api/users', userRoutes(pool));
+// app.use('/api/admin/templates', adminTemplateRoutes(pool)); // Corrected path prefix
+// app.use('/api/admin', planRoutes); // This now works correctly
+
+// // --- Catch-all 404 Handler ---
+// // This MUST be the last route handler.
+// app.use((req, res, next) => {
+//   res.status(404).json({ message: 'API Endpoint Not Found' });
+// });
+
+// // --- Server Startup and Database Sync ---
+// const startServer = async () => {
+//   try {
+//     // Sync Sequelize models with the database
+//     await sequelize.sync({ alter: true }); // `alter: true` updates tables to match models
+//     console.log('Database & tables synced successfully!');
+
+//     const PORT = process.env.PORT || 5000;
+
+//     const server = app.listen(PORT, () => {
+//       console.log(`Server running on port ${PORT}`);
+//     });
+
+//     // --- Graceful Shutdown Logic ---
+//     const shutdown = (signal) => {
+//       console.log(`\n${signal} received. Shutting down gracefully...`);
+//       server.close(() => {
+//         console.log('HTTP server closed.');
+//         pool.end().then(() => {
+//           console.log('PostgreSQL pool has been closed.');
+//           process.exit(0);
+//         }).catch(e => {
+//           console.error('Error closing PostgreSQL pool:', e);
+//           process.exit(1);
+//         });
+//       });
+//     };
+
+//     process.on('SIGINT', () => shutdown('SIGINT'));
+//     process.on('SIGTERM', () => shutdown('SIGTERM'));
+
+//     process.on('unhandledRejection', (err) => {
+//       console.error('Unhandled Rejection:', err);
+//       // In a real production app, you might want a more robust logger here
+//     });
+
+//     process.on('uncaughtException', (err) => {
+//       console.error('Uncaught Exception:', err);
+//       // It's generally advised to shut down on uncaught exceptions
+//       shutdown('Uncaught Exception');
+//     });
+
+//   } catch (err) {
+//     console.error('Fatal Error during startup:', err);
+//     process.exit(1);
+//   }
+// };
+
+// startServer();
+
+
+
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -121,9 +224,7 @@ require('dotenv').config();
 // --- Database & Model Imports ---
 const pool = require('./config/db'); // PostgreSQL pool
 const sequelize = require('./config/sequelize'); // Sequelize instance
-// Note: It's good practice to ensure models are imported, even if not directly used here,
-// so Sequelize is aware of them for the .sync() call.
-require('./models/template'); 
+require('./models/template');
 require('./models/userTemplateUsage');
 
 // --- Route Imports ---
@@ -135,55 +236,64 @@ const planRoutes = require('./routes/planRoutes');
 // --- Express App Initialization ---
 const app = express();
 
-// --- Core Middleware (Order is CRITICAL) ---
+// --- CORS Configuration ---
+const allowedOrigins = [
+  'http://localhost:3001',
+  'https://nexinteladmin.netlify.app'
+];
 
-// 1. CORS Middleware: Handle cross-origin requests first.
 app.use(cors({
-  origin: 'http://localhost:3001', // Allow requests from your frontend
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    }
+  },
+  credentials: true
 }));
 
-// 2. JSON Body Parser: To parse `req.body` from JSON requests.
+// Enable pre-flight requests across the board
+app.options('*', cors());
+
+// --- Middleware ---
 app.use(express.json());
 
-// 3. Logging Middleware: To see all incoming requests.
 app.use((req, res, next) => {
   console.log(`Incoming Request: ${req.method} ${req.originalUrl}`);
   next();
 });
 
 // --- API Routes ---
-// All routes are defined AFTER the core middleware has been set up.
 app.use('/api/auth', authRoutes(pool));
 app.use('/api/users', userRoutes(pool));
-app.use('/api/admin/templates', adminTemplateRoutes(pool)); // Corrected path prefix
-app.use('/api/admin', planRoutes); // This now works correctly
+app.use('/api/admin/templates', adminTemplateRoutes(pool));
+app.use('/api/admin', planRoutes);
 
-// --- Catch-all 404 Handler ---
-// This MUST be the last route handler.
-app.use((req, res, next) => {
+// --- 404 Handler ---
+app.use((req, res) => {
   res.status(404).json({ message: 'API Endpoint Not Found' });
 });
 
-// --- Server Startup and Database Sync ---
+// --- Server Start ---
 const startServer = async () => {
   try {
-    // Sync Sequelize models with the database
-    await sequelize.sync({ alter: true }); // `alter: true` updates tables to match models
-    console.log('Database & tables synced successfully!');
+    await sequelize.sync({ alter: true });
+    console.log('Database synced!');
 
     const PORT = process.env.PORT || 5000;
-
     const server = app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
 
-    // --- Graceful Shutdown Logic ---
+    // Graceful Shutdown
     const shutdown = (signal) => {
-      console.log(`\n${signal} received. Shutting down gracefully...`);
+      console.log(`\n${signal} received. Closing server...`);
       server.close(() => {
         console.log('HTTP server closed.');
         pool.end().then(() => {
-          console.log('PostgreSQL pool has been closed.');
+          console.log('PostgreSQL pool closed.');
           process.exit(0);
         }).catch(e => {
           console.error('Error closing PostgreSQL pool:', e);
@@ -195,21 +305,20 @@ const startServer = async () => {
     process.on('SIGINT', () => shutdown('SIGINT'));
     process.on('SIGTERM', () => shutdown('SIGTERM'));
 
-    process.on('unhandledRejection', (err) => {
+    process.on('unhandledRejection', err => {
       console.error('Unhandled Rejection:', err);
-      // In a real production app, you might want a more robust logger here
     });
 
-    process.on('uncaughtException', (err) => {
+    process.on('uncaughtException', err => {
       console.error('Uncaught Exception:', err);
-      // It's generally advised to shut down on uncaught exceptions
       shutdown('Uncaught Exception');
     });
 
   } catch (err) {
-    console.error('Fatal Error during startup:', err);
+    console.error('Startup Error:', err);
     process.exit(1);
   }
 };
 
 startServer();
+
