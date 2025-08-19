@@ -255,7 +255,7 @@ app.use(cors({
 }));
 
 // Enable pre-flight requests across the board
-app.options('*', cors());
+// app.options('*', cors());
 
 // --- Middleware ---
 app.use(express.json());
