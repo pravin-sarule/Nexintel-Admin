@@ -1141,7 +1141,7 @@ const TemplateManagement = () => {
   const [updateLoading, setUpdateLoading] = useState(false);
 
   // API Base URL - adjust according to your setup
-  const API_BASE_URL = 'https://nexintel-admin.onrender.com';
+  const API_BASE_URL = 'https://nexintel-admin.onrender.com/api';
 
   // Get user info from token
   useEffect(() => {
