@@ -544,12 +544,15 @@ exports.createPlan = async (req, res) => {
         template_access, // 'basic' | 'premium'
         token_limit,
         carry_over_limit,
-        limits // Optional JSON: { summaries: 50, drafts: 10 }
+        limits, // Optional JSON: { summaries: 50, drafts: 10 }
+        storage_limit_gb,
+        drafting_type,
+        razorpay_plan_id
     } = req.body;
 
     if (!name || !description || !interval || !type || price == null ||
         token_limit == null || carry_over_limit == null || document_limit == null ||
-        ai_analysis_limit == null || !template_access) {
+        ai_analysis_limit == null || !template_access || storage_limit_gb == null || !drafting_type) {
         return res.status(400).json({
             success: false,
             message: 'Missing required fields'
@@ -560,9 +563,9 @@ exports.createPlan = async (req, res) => {
         INSERT INTO subscription_plans (
             name, description, price, currency, "interval", type,
             features, document_limit, ai_analysis_limit, template_access,
-            token_limit, carry_over_limit, limits
+            token_limit, carry_over_limit, limits, storage_limit_gb, drafting_type, razorpay_plan_id
         )
-        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
         RETURNING *;
     `;
 
@@ -579,7 +582,10 @@ exports.createPlan = async (req, res) => {
         template_access,
         token_limit,
         carry_over_limit,
-        JSON.stringify(limits)
+        JSON.stringify(limits),
+        storage_limit_gb,
+        drafting_type,
+        razorpay_plan_id
     ];
 
     try {
@@ -663,7 +669,10 @@ exports.updatePlan = async (req, res) => {
         template_access,
         token_limit,
         carry_over_limit,
-        limits
+        limits,
+        storage_limit_gb,
+        drafting_type,
+        razorpay_plan_id
     } = req.body;
 
     const query = `
@@ -681,8 +690,11 @@ exports.updatePlan = async (req, res) => {
         token_limit = $11,
         carry_over_limit = $12,
         limits = $13,
+        storage_limit_gb = $14,
+        drafting_type = $15,
+        razorpay_plan_id = $16,
         updated_at = NOW()
-        WHERE id = $14
+        WHERE id = $17
         RETURNING *;
     `;
 
@@ -700,6 +712,9 @@ exports.updatePlan = async (req, res) => {
         token_limit,
         carry_over_limit,
         JSON.stringify(limits),
+        storage_limit_gb,
+        drafting_type,
+        razorpay_plan_id,
         id
     ];
 

@@ -226,12 +226,14 @@ const pool = require('./config/db'); // PostgreSQL pool
 const sequelize = require('./config/sequelize'); // Sequelize instance
 require('./models/template');
 require('./models/userTemplateUsage');
+require('./models/support_query'); // Import the new support query model
 
 // --- Route Imports ---
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const adminTemplateRoutes = require('./routes/adminTemplateRoutes');
 const planRoutes = require('./routes/planRoutes');
+const supportQueryRoutes = require('./routes/supportQueryRoutes'); // Import the new support query routes
 
 // --- Express App Initialization ---
 const app = express();
@@ -270,6 +272,7 @@ app.use('/api/auth', authRoutes(pool));
 app.use('/api/users', userRoutes(pool));
 app.use('/api/admin/templates', adminTemplateRoutes(pool));
 app.use('/api/admin', planRoutes);
+app.use('/api/support-queries', supportQueryRoutes(pool)); // Pass pool to supportQueryRoutes
 
 // --- 404 Handler ---
 app.use((req, res) => {
