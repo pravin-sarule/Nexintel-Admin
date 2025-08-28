@@ -18,7 +18,8 @@ import {
   Edit,
   Table,
   Map,
-  Layers
+  Layers,
+  LifeBuoy
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen }) => {
@@ -60,6 +61,11 @@ const Sidebar = ({ isOpen }) => {
       name: 'Subscription Management',
       path: '/dashboard/subscriptions',
       icon: Layers
+    },
+    {
+      name: 'Support & Help',
+      path: '/dashboard/support',
+      icon: LifeBuoy
     },
   ];
 
