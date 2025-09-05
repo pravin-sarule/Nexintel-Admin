@@ -10,6 +10,7 @@ import ContentManagement from './pages/dashboard/ContentManagement';
 import TemplateManagement from './pages/dashboard/TemplateManagement';
 import SubscriptionManagement from './pages/dashboard/SubscriptionManagement';
 import SupportHelp from './pages/dashboard/SupportHelp';
+import PromptManagement from './pages/dashboard/PromptManagement';
 import './App.css';
 import './index.css';
 
@@ -61,6 +62,7 @@ function App() {
             <Route path="articles" element={<ContentManagement />} />
             <Route path="templates" element={<TemplateManagement />} />
             <Route path="subscriptions" element={<SubscriptionManagement />} />
+            <Route path="prompts" element={<PromptManagement />} />
             <Route path="support" element={<SupportHelp />} />
           </Route>
         </Route>

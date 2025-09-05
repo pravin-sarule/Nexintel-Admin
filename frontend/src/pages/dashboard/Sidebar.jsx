@@ -63,6 +63,11 @@ const Sidebar = ({ isOpen }) => {
       icon: Layers
     },
     {
+      name: 'Prompt Management',
+      path: '/dashboard/prompts',
+      icon: Edit
+    },
+    {
       name: 'Support & Help',
       path: '/dashboard/support',
       icon: LifeBuoy
