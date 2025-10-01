@@ -1,78 +1,3 @@
-// import React from 'react';
-// import { Link } from 'react-router-dom';
-
-// const LandingPage = () => {
-//   return (
-//     <div className="min-h-screen bg-gray-100">
-//       {/* Navbar */}
-//       <nav className="bg-blue-800 p-4 shadow-md">
-//         <div className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
-//           <h1 className="text-white text-2xl font-bold">Nexintel Admin Portal</h1>
-//           <ul className="flex space-x-4">
-//             <li><a href="#" className="text-white hover:text-blue-200">Dashboard</a></li>
-//             <li><a href="#" className="text-white hover:text-blue-200">Cases</a></li>
-//             <li><a href="#" className="text-white hover:text-blue-200">Clients</a></li>
-//             <li><a href="#" className="text-white hover:text-blue-200">Settings</a></li>
-//             <li><a href="#" className="text-white hover:text-blue-200">Logout</a></li>
-//           </ul>
-//         </div>
-//       </nav>
-
-//       {/* Hero Section */}
-//       <header className="bg-white py-12 shadow-sm">
-//         <div className="container mx-auto text-center px-4 sm:px-6 lg:px-8">
-//           <h2 className="text-4xl font-extrabold text-gray-900 mb-4">Welcome to the Admin Dashboard</h2>
-//           <p className="text-lg text-gray-600 mb-8">Manage your legal operations efficiently and securely.</p>
-//           <Link to="/login" className="bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transform transition duration-300 hover:scale-105 inline-block">
-//             Admin Login
-//           </Link>
-//         </div>
-//       </header>
-
-//       {/* Features Section */}
-//       <section className="py-16 bg-gray-50">
-//         <div className="container mx-auto px-6">
-//           <h3 className="text-3xl font-bold text-center text-gray-800 mb-12">Key Features</h3>
-//           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-//             {/* Feature Card 1 */}
-//             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
-//               <div className="text-blue-800 text-4xl mb-4 text-center">
-//                 <i className="fas fa-balance-scale"></i> {/* Placeholder for icon */}
-//               </div>
-//               <h4 className="text-xl font-semibold text-gray-800 mb-2 text-center">Case Management</h4>
-//               <p className="text-gray-600 text-center">Streamline your case workflows from intake to resolution.</p>
-//             </div>
-//             {/* Feature Card 2 */}
-//             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
-//               <div className="text-blue-800 text-4xl mb-4 text-center">
-//                 <i className="fas fa-users"></i> {/* Placeholder for icon */}
-//               </div>
-//               <h4 className="text-xl font-semibold text-gray-800 mb-2 text-center">Client Relations</h4>
-//               <p className="text-gray-600 text-center">Maintain detailed client profiles and communication logs.</p>
-//             </div>
-//             {/* Feature Card 3 */}
-//             <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition duration-300">
-//               <div className="text-blue-800 text-4xl mb-4 text-center">
-//                 <i className="fas fa-chart-line"></i> {/* Placeholder for icon */}
-//               </div>
-//               <h4 className="text-xl font-semibold text-gray-800 mb-2 text-center">Performance Analytics</h4>
-//               <p className="text-gray-600 text-center">Gain insights into your firm's performance with comprehensive reports.</p>
-//             </div>
-//           </div>
-//         </div>
-//       </section>
-
-//       {/* Footer */}
-//       <footer className="bg-gray-800 text-white py-8 mt-12">
-//         <div className="container mx-auto text-center px-4 sm:px-6 lg:px-8">
-//           <p>&copy; 2024 Nexintel. All rights reserved.</p>
-//         </div>
-//       </footer>
-//     </div>
-//   );
-// };
-
-// export default LandingPage;
 
 import React from 'react';
 import { Link } from 'react-router-dom'; // Import Link
@@ -91,7 +16,7 @@ const LandingPage = () => {
             <li><a href="#" className="text-gray-200 hover:text-white font-medium transition-colors">Cases</a></li>
             <li><a href="#" className="text-gray-200 hover:text-white font-medium transition-colors">Clients</a></li>
             <li><a href="#" className="text-gray-200 hover:text-white font-medium transition-colors">Settings</a></li>
-            <li><a href="#" className="text-gray-200 hover:text-white font-medium transition-colors">Logout</a></li>
+            <li><Link to="/login" className="text-white-200 bg-gray-700 hover:text-white font-medium transition-colors">Login</Link></li>
           </ul>
         </div>
       </nav>

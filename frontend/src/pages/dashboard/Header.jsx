@@ -24,7 +24,6 @@
 // export default Header;
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 const Header = ({ toggleSidebar }) => {
   return (
@@ -42,13 +41,10 @@ const Header = ({ toggleSidebar }) => {
       
       <div className="flex items-center">
         <span className="mr-3 text-gray-600 font-medium hidden sm:inline">Welcome, Admin!</span>
-        <Link to="/login" className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200">
-          Login
-        </Link>
         <img
           src="https://via.placeholder.com/40/6B7280/FFFFFF?text=A" // Placeholder for user profile image
           alt="User Profile"
-          className="w-10 h-10 rounded-full border-2 border-gray-300 hover:border-gray-400 transition-colors duration-200 ml-4"
+          className="w-10 h-10 rounded-full border-2 border-gray-300 hover:border-gray-400 transition-colors duration-200"
         />
       </div>
     </header>
