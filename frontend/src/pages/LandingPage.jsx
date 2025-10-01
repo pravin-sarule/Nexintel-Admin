@@ -16,7 +16,12 @@ const LandingPage = () => {
             <li><a href="#" className="text-gray-200 hover:text-white font-medium transition-colors">Cases</a></li>
             <li><a href="#" className="text-gray-200 hover:text-white font-medium transition-colors">Clients</a></li>
             <li><a href="#" className="text-gray-200 hover:text-white font-medium transition-colors">Settings</a></li>
-            <li><Link to="/login" className="text-white-200 bg-gray-700 hover:text-white font-medium transition-colors">Login</Link></li>
+            <li>
+              <Link to="/login" className="bg-gray-700 hover:bg-gray-800 text-white font-semibold py-3 px-8 rounded-lg text-lg shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl inline-flex items-center">
+                <FileText className="w-5 h-5 mr-2" />
+                Login
+              </Link>
+            </li>
           </ul>
         </div>
       </nav>
