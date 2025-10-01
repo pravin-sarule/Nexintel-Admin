@@ -22,7 +22,7 @@ const LoginPage = ({ setAuthStatus }) => { // Added setAuthStatus prop
     setSuccess('');
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login',
+      const response = await axios.post('https://admin-panel-eldn.onrender.com/api/auth/login',
         { email, password },
         {
           headers: {

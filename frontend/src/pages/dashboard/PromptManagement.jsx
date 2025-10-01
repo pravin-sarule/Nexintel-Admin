@@ -66,7 +66,7 @@ const PromptManagement = () => {
   const [fetchValueLoading, setFetchValueLoading] = useState({});
 
   // API Base URL
-  const API_BASE_URL = 'http://localhost:5000/api/secrets';
+  const API_BASE_URL = 'https://admin-panel-eldn.onrender.com/api/secrets';
 
   // Get user info from token
   useEffect(() => {
